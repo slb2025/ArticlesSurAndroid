@@ -1,4 +1,4 @@
-package com.example.tpandroid
+package com.example.tpandroid.article
 
 data class Article (
     val title: String,

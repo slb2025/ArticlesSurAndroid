@@ -7,6 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.tpandroid.article.Article
+import com.example.tpandroid.ui.screens.ArticleListScreen
 import com.example.tpandroid.ui.screens.ForgotPasswordScreen
 import com.example.tpandroid.ui.screens.LoginScreen
 import com.example.tpandroid.ui.screens.RegisterScreen
@@ -29,13 +31,21 @@ class MainActivity : ComponentActivity() {
                 }
 
                 composable("register") {
-                    RegisterScreen()
+                    RegisterScreen(navController = navController)
                 }
 
                 composable("articles") {
                     val articles = listOf(
-                        Article("Titre 1", "Description de l'article 1...", "https://via.placeholder.com/150"),
-                        Article("Titre 2", "Description de l'article 2...", "https://via.placeholder.com/150"),
+                        Article(
+                            "Titre 1",
+                            "Description de l'article 1...",
+                            "https://via.placeholder.com/150"
+                        ),
+                        Article(
+                            "Titre 2",
+                            "Description de l'article 2...",
+                            "https://via.placeholder.com/150"
+                        ),
                     )
                     ArticleListScreen(articles = articles)
                 }

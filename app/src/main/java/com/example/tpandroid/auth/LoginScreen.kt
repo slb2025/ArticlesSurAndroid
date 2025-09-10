@@ -15,11 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.tpandroid.ui.theme.customTextFieldColors
 import getCustomGradientBrush
 
@@ -49,7 +51,11 @@ fun LoginScreen(navController: NavController = NavController(LocalContext.curren
             value = email.value,
             onValueChange = { email.value = it },
             label = { Text("Email") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Unspecified,
+                autoCorrectEnabled = false,
+                keyboardType = KeyboardType.Email
+            ),
             modifier = Modifier.fillMaxWidth(),
             colors = customTextFieldColors(),
             leadingIcon = {
@@ -93,7 +99,9 @@ fun LoginScreen(navController: NavController = NavController(LocalContext.curren
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { /* TODO: Gérer la logique de connexion */ },
+            onClick = {
+                navController.navigate("articles")
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Connexion")
@@ -112,5 +120,5 @@ fun LoginScreen(navController: NavController = NavController(LocalContext.curren
 @Preview(showBackground = true)
 @Composable
 fun PreviewLoginScreen() {
-    LoginScreen()
+    LoginScreen(navController = rememberNavController())
 }
