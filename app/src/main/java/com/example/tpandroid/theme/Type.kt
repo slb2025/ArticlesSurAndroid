@@ -1,4 +1,4 @@
-package com.example.tpandroid.ui.theme
+package com.example.tpandroid.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

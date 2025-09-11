@@ -53,6 +53,14 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.navigation.compose)
     implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+    // Retrofit pour les requêtes HTTP
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    // Converter de Gson pour la sérialisation/désérialisation JSON
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    // OkHttp pour l'interception des requêtes/réponses
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation(libs.androidx.compose.foundation.layout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -60,4 +68,16 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // Moshi
+    implementation("com.squareup.moshi:moshi:1.14.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
+
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+
+    // Ok HTTP
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+
 }

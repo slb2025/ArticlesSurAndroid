@@ -1,4 +1,4 @@
-package com.example.tpandroid.ui.theme
+package com.example.tpandroid.theme
 
 import android.R.attr.text
 import androidx.compose.material3.OutlinedTextFieldDefaults
