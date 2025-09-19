@@ -1,4 +1,3 @@
-// ArticleListScreen.kt
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,12 +9,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.tpandroid.articles.ui.ArticleItem
 import com.example.tpandroid.articles.viewModels.ArticleViewModel
+import com.example.tpandroid.common.AppAlertHelpers
 import com.example.tpandroid.theme.getCustomGradientBrush
 
 @Composable
@@ -64,18 +65,17 @@ fun ArticleListScreen(
                             .padding(bottom = 32.dp),
                         textAlign = TextAlign.Center
                     )
-
                     Spacer(modifier = Modifier.height(32.dp))
-
                     Button(
-                        onClick = { navController.navigate("login") },
+                        onClick = {
+                            viewModel.onLogout()
+                            navController.navigate("login")
+                        },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("Déconnexion")
                     }
-
                     Spacer(modifier = Modifier.height(32.dp))
-
                     Button(
                         onClick = { viewModel.fetchArticles() },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
@@ -86,8 +86,6 @@ fun ArticleListScreen(
                     ) {
                         Text("Charger les articles")
                     }
-
-                    // Bouton pour la création d'articles, bien placé à l'intérieur de la Column.
                     Button(
                         onClick = {
                             viewModel.setArticleToEdit(null)
@@ -103,7 +101,6 @@ fun ArticleListScreen(
                     }
                 }
             }
-
             items(articles) { article ->
                 ArticleItem(
                     article = article,
@@ -120,5 +117,23 @@ fun ArticleListScreen(
                 )
             }
         }
+        AlertDialog()
+    }
+}
+
+@Composable
+fun AlertDialog() {
+    val alertModelData by AppAlertHelpers.alertModelData.collectAsState()
+    if (alertModelData.isShow) {
+        AlertDialog(
+            onDismissRequest = { AppAlertHelpers.close() },
+            title = { Text(text = "Alerte") },
+            text = { Text(text = alertModelData.message) },
+            confirmButton = {
+                TextButton(onClick = { AppAlertHelpers.close() }) {
+                    Text(text = "OK")
+                }
+            }
+        )
     }
 }

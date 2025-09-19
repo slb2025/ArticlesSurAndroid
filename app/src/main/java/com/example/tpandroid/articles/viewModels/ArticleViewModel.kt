@@ -38,36 +38,36 @@ class ArticleViewModel : ViewModel() {
 
     // Fonction pour récupérer la liste de tous les articles depuis l'API.
     fun fetchArticles() {
-        // Affiche un indicateur de chargement à l'utilisateur.
         AppProgressHelpers.show("Chargement des articles...")
-        // Lance une coroutine dans le scope du ViewModel. Cela garantit que la tâche
-        // sera annulée automatiquement si le ViewModel est détruit, évitant ainsi les fuites de mémoire.
         viewModelScope.launch {
             try {
-                // Effectue l'appel à l'API via l'instance de Retrofit et récupère la réponse.
                 val apiResponse = RetrofitTools.apiService.getArticles()
-
-                // Vérifie le code de la réponse de l'API.
                 if (apiResponse.code == "200") {
-                    // Si le code est 200 (succès), met à jour la valeur de _articles.
-                    // L'opérateur Elvis (?:) garantit que si les données sont null, une liste vide est utilisée à la place.
                     _articles.value = apiResponse.data ?: emptyList()
-                    // Affiche un message de succès à l'utilisateur.
                     AppAlertHelpers.show(apiResponse.message)
                 } else {
-                    // Si le code n'est pas 200, affiche le message d'erreur de l'API.
                     AppAlertHelpers.show(apiResponse.message)
                 }
             } catch (e: Exception) {
-                // Intercepte toutes les exceptions (ex: erreur de réseau)
-                // Enregistre l'erreur dans le logcat.
                 Log.e("ArticleViewModel", "Erreur lors du chargement des articles : ${e.message}", e)
-                // Affiche un message d'erreur de connexion à l'utilisateur.
                 AppAlertHelpers.show("Erreur de connexion : impossible de charger les articles.")
             } finally {
-                // Ce bloc s'exécute toujours, que l'appel ait réussi ou échoué.
-                // Il masque l'indicateur de chargement.
                 AppProgressHelpers.close()
+            }
+        }
+    }
+
+    // Fonction de rafraîchissement silencieuse
+    private fun silentFetchArticles() {
+        viewModelScope.launch {
+            try {
+                val apiResponse = RetrofitTools.apiService.getArticles()
+                if (apiResponse.code == "200") {
+                    _articles.value = apiResponse.data ?: emptyList()
+                }
+            } catch (e: Exception) {
+                // Gérer l'erreur silencieusement ou la logger, mais ne pas afficher d'alerte à l'utilisateur
+                Log.e("ArticleViewModel", "Erreur silencieuse lors du rafraîchissement des articles : ${e.message}", e)
             }
         }
     }
@@ -93,18 +93,17 @@ class ArticleViewModel : ViewModel() {
         }
     }
 
-    // Fonction pour sauvegarder un article (création ou mise à jour).
+    // Fonction de sauvegarde de l'article
     fun saveArticle(article: Article) {
         viewModelScope.launch {
             AppProgressHelpers.show("Sauvegarde de l'article...")
             try {
-                // Appelle l'API pour sauvegarder l'article.
                 val response = RetrofitTools.apiService.saveArticle(article)
                 if (response.code == "200") {
+                    // Afficher le message spécifique de la sauvegarde
                     AppAlertHelpers.show(response.message)
-                    // Recharge la liste complète des articles pour afficher les modifications.
-                    fetchArticles()
-                    // Réinitialise l'article en cours d'édition.
+                    // Puis, rafraîchir la liste SANS afficher de message
+                    silentFetchArticles()
                     _articleToEdit.value = null
                 } else {
                     AppAlertHelpers.show(response.message)
@@ -117,29 +116,34 @@ class ArticleViewModel : ViewModel() {
         }
     }
 
-    // Fonction pour supprimer un article.
+    // Fonction de suppression de l'article
     fun deleteArticle(articleId: String) {
         viewModelScope.launch {
             try {
-                // L'appel renvoie un objet Response<Unit> qui n'essaie pas de parser un JSON.
+                AppProgressHelpers.show("Suppression de l'article...")
                 val response = RetrofitTools.apiService.deleteArticle(articleId)
 
                 if (response.isSuccessful) {
-                    // La requête est un succès (code HTTP 200, 204, etc.).
+                    // Afficher le message spécifique de la suppression
                     AppAlertHelpers.show("Article supprimé avec succès.")
-                    // Recharge la liste pour mettre à jour l'UI.
-                    fetchArticles()
+                    // Puis, rafraîchir la liste SANS afficher de message
+                    silentFetchArticles()
                 } else {
-                    // La requête a échoué (code 4xx, 5xx).
                     AppAlertHelpers.show("Échec de la suppression.")
                 }
             } catch (e: Exception) {
-                // Gérer les erreurs de connexion.
                 AppAlertHelpers.show("Erreur de connexion : ${e.message}")
+            } finally {
+                AppProgressHelpers.close()
             }
         }
     }
+
     fun setArticleToEdit(article: Article?) {
         _articleToEdit.value = article
+    }
+
+    fun onLogout() {
+        AppAlertHelpers.show("Vous avez été déconnecté.")
     }
 }
