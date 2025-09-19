@@ -1,5 +1,4 @@
-package com.example.tpandroid.articles.ui
-
+// ArticleListScreen.kt
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.tpandroid.articles.ui.ArticleItem
 import com.example.tpandroid.articles.viewModels.ArticleViewModel
 import com.example.tpandroid.theme.getCustomGradientBrush
 
@@ -33,14 +33,8 @@ fun ArticleListScreen(
     navController: NavController,
     viewModel: ArticleViewModel
 ) {
-
     val gradientBrush = getCustomGradientBrush()
     val articles by viewModel.articles.collectAsState()
-
-    // Charger les articles dès que l'écran est affiché
-    LaunchedEffect(key1 = Unit) {
-        viewModel.fetchArticles()
-    }
 
     Box(
         modifier = Modifier
@@ -54,7 +48,6 @@ fun ArticleListScreen(
                 .fillMaxSize()
                 .background(brush = gradientBrush)
                 .padding(16.dp),
-
             contentPadding = PaddingValues(top = 16.dp),
         ) {
             item {
@@ -75,9 +68,7 @@ fun ArticleListScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     Button(
-                        onClick = {
-                            navController.navigate("login")
-                        },
+                        onClick = { navController.navigate("login") },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("Déconnexion")
@@ -86,9 +77,7 @@ fun ArticleListScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     Button(
-                        onClick = {
-                            viewModel.fetchArticles()
-                        },
+                        onClick = { viewModel.fetchArticles() },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF4CAF50),
@@ -97,12 +86,34 @@ fun ArticleListScreen(
                     ) {
                         Text("Charger les articles")
                     }
+
+                    // Bouton pour la création d'articles, bien placé à l'intérieur de la Column.
+                    Button(
+                        onClick = {
+                            viewModel.setArticleToEdit(null)
+                            navController.navigate("articleForm")
+                        },
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Blue,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text("Créer un article")
+                    }
                 }
             }
 
             items(articles) { article ->
                 ArticleItem(
                     article = article,
+                    onViewClick = { articleId ->
+                        navController.navigate("articleDetails/$articleId")
+                    },
+                    onEditClick = { articleToEdit ->
+                        viewModel.setArticleToEdit(articleToEdit)
+                        navController.navigate("articleForm")
+                    },
                     onDeleteClick = { articleId ->
                         viewModel.deleteArticle(articleId)
                     }
@@ -111,4 +122,3 @@ fun ArticleListScreen(
         }
     }
 }
-

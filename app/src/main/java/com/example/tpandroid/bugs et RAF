@@ -1,0 +1,18 @@
+Testé et OK
+- Login
+- Voir Article
+- Supprimer article
+- Editer article
+- Créer article
+
+A faire
+- Construire le readme en donnant 1 login toto avec MDP + précision sur le fait que les articles ne sont pas supprimés en base car en dur dans le articles-route
+- Déconnexion : pas de message de déconnexion
+- Charger articles : message de chargement des articles avec succès apparaît après la déconnexion (cf. message dans l'API)
+- Editer article : pas de champs préremplis et titre = Création d'un article au lieu de Modification d'un article
+- Editer article : quand on sauvegarde une édition, ça crée un nouvel article
+
+A tester
+- forgot password
+- création nouveau compte
+

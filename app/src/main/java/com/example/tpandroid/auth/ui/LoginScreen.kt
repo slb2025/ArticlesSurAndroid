@@ -22,38 +22,35 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.lifecycle.viewmodel.compose.viewModel // Import manquant
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tpandroid.auth.viewModels.LoginViewModel
+import com.example.tpandroid.common.AppAlertHelpers
+import com.example.tpandroid.common.AppProgressHelpers
 import com.example.tpandroid.theme.customTextFieldColors
-import com.example.tpandroid.theme.getCustomGradientBrush // Import manquant
+import com.example.tpandroid.theme.getCustomGradientBrush
 
 @Composable
 fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewModel()) {
-    // Déclaration de la variable gradientBrush
     val gradientBrush = getCustomGradientBrush()
 
-    // Collecte des états du ViewModel
     val email by viewModel.email.collectAsState()
     val password by viewModel.password.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val loginResult by viewModel.loginResult.collectAsState()
+
+    val isLoading by AppProgressHelpers.isLoading.collectAsState()
+    val alertModelData by AppAlertHelpers.alertModelData.collectAsState()
+    val navigateToArticles by viewModel.navigateToArticles.collectAsState()
     val context = LocalContext.current
 
-    // Observe le résultat de la connexion pour afficher la popup et naviguer
-    LaunchedEffect(key1 = loginResult) {
-        if (loginResult != null) {
-            if (loginResult == "Vous êtes connecté(e)") {
-                Toast.makeText(context, loginResult, Toast.LENGTH_LONG).show()
-                navController.navigate("articles") {
-                    popUpTo("login") { inclusive = true }
-                }
-            } else {
-                Toast.makeText(context, loginResult, Toast.LENGTH_LONG).show()
+    LaunchedEffect(key1 = navigateToArticles) {
+        if (navigateToArticles) {
+            navController.navigate("articles") {
+                popUpTo("login") { inclusive = true }
             }
+            viewModel.onNavigationHandled()
         }
     }
 
-    Box( // Utiliser Box pour afficher le chargement par-dessus le reste
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(brush = gradientBrush)
@@ -73,7 +70,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
             )
 
             OutlinedTextField(
-                value = email, // Correction : utiliser 'email' directement
+                value = email,
                 onValueChange = { viewModel.setEmail(it) },
                 label = { Text("Email") },
                 keyboardOptions = KeyboardOptions(
@@ -94,7 +91,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = password, // Correction : utiliser 'password' directement
+                value = password,
                 onValueChange = { viewModel.setPassword(it) },
                 label = { Text("Mot de passe") },
                 visualTransformation = PasswordVisualTransformation(),
@@ -136,11 +133,27 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = viewMo
                 Text("Pas encore de compte ? S'inscrire")
             }
         }
-
-        // Utilisation de Box pour le chargement
         if (isLoading) {
-            // Un indicateur de chargement au centre de l'écran
             CircularProgressIndicator(color = Color.White)
         }
+        AlertDialog()
+    }
+}
+
+@Composable
+fun AlertDialog() {
+    val alertModelData by AppAlertHelpers.alertModelData.collectAsState()
+
+    if (alertModelData.isShow) {
+        AlertDialog(
+            onDismissRequest = { AppAlertHelpers.close() },
+            title = { Text(text = "Alerte") },
+            text = { Text(text = alertModelData.message) },
+            confirmButton = {
+                TextButton(onClick = { AppAlertHelpers.close() }) {
+                    Text(text = "OK")
+                }
+            }
+        )
     }
 }
