@@ -1,0 +1,16 @@
+Testé et OK
+- Login
+- Voir Article
+- Supprimer article
+- Editer article
+- Créer article
+- Construire le readme en donnant 1 login toto avec MDP + précision sur le fait que les articles ne sont pas supprimés en base car en dur dans le articles-route
+- Editer article : champs préremplis
+- Editer article : titre modifier un article apparaît
+- Messages de connexion / déconnexion
+- Faire apparaître les messages de chargement / suppression d'article
+
+A tester
+- forgot password
+- création nouveau compte (id missing)
+
